@@ -166,12 +166,13 @@ button.alt{background:#e4e7ec;color:#344054}
 
 <h3>🟢 FEEDBACK EXCELENTE</h3>
 <div>Professor ofereceu uma vaga → feedback excelente, desde que não exista uma condição automática de feedback ruim.</div>
-<div>Sem oferta de vaga: 5 ou mais sinais positivos, sem condição automática de feedback ruim → excelente.</div>
+<div>Professor leu o currículo + 5 ou mais sinais positivos, sem condição automática de feedback ruim → excelente.</div>
 
 <h3>🟢 FEEDBACK BOM</h3>
-<div>3 ou 4 sinais positivos, sem condição automática de feedback ruim → bom.</div>
+<div>Professor leu o currículo + 3 ou 4 sinais positivos, sem condição automática de feedback ruim → bom.</div>
 
 <h3>🟡 FEEDBACK NEUTRO</h3>
+<div>Se o professor não leu o currículo ou não se sabe se leu, o feedback será no máximo neutro, exceto quando houver oferta de vaga.</div>
 <div>Menos de 3 sinais positivos e até 3 respostas negativas, sem condição automática de feedback ruim → neutro.</div>
 
 <h3>CONTAGEM</h3>
@@ -256,21 +257,26 @@ function evaluate(){
   if(!level && values.offer === 'yes'){
     level = 'excellent';
     reason = 'O professor ofereceu uma vaga.';
-  } else if(!level && positive >= 5){
+  } else if(!level && values.readCV === 'yes' && positive >= 5){
     level = 'excellent';
-    reason = 'Foram identificados 5 ou mais sinais positivos, sem condição automática de feedback ruim.';
+    reason = 'O professor leu o currículo e foram identificados 5 ou mais sinais positivos, sem condição automática de feedback ruim.';
   }
 
   // FEEDBACK BOM
-  if(!level && positive >= 3){
+  if(!level && values.readCV === 'yes' && positive >= 3){
     level = 'good';
-    reason = 'Foram identificados 3 ou 4 sinais positivos, sem condição automática de feedback ruim.';
+    reason = 'O professor leu o currículo e foram identificados 3 ou 4 sinais positivos, sem condição automática de feedback ruim.';
   }
 
   // FEEDBACK NEUTRO
   if(!level){
-    level = 'neutral';
-    reason = 'Há poucos sinais positivos e não foi identificada uma condição para feedback ruim.';
+    if(values.readCV !== 'yes'){
+      level = 'neutral';
+      reason = 'Como o professor não leu o currículo ou não se sabe se leu, o feedback é no máximo neutro, exceto quando há oferta de vaga.';
+    } else {
+      level = 'neutral';
+      reason = 'Há poucos sinais positivos e não foi identificada uma condição para feedback ruim.';
+    }
   }
 
   const labels = {
