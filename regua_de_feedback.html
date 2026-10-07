@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Régua de Feedback</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;color:#1f2937;font-family:Arial,sans-serif}
+.container{max-width:1050px;margin:auto;padding:26px 18px 45px}
+.card{background:#fff;border-radius:14px;padding:22px;margin-bottom:18px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
+h1{margin:0 0 6px;font-size:28px}
+h2{font-size:19px;margin:0 0 18px}
+.subtitle{color:#667085;margin-bottom:22px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+label{display:block;font-weight:700;font-size:14px;margin-bottom:6px}
+input,select{width:100%;padding:11px;border:1px solid #d0d5dd;border-radius:8px;background:#fff;font-size:15px}
+.note{font-size:11px;color:#667085;margin-top:5px;line-height:1.4}
+.diagnosis{text-align:center;padding:21px;border:2px solid #d0d5dd;border-radius:12px;background:#f9fafb;margin-bottom:18px}
+.diagnosis.excellent{background:#ecfdf3;border-color:#12b76a}
+.diagnosis.good{background:#f0fdf4;border-color:#32a852}
+.diagnosis.neutral{background:#fffaeb;border-color:#f79009}
+.diagnosis.bad{background:#fef3f2;border-color:#f04438}
+.dtitle{font-size:12px;color:#667085;font-weight:700;letter-spacing:.05em}
+.univ{font-size:19px;font-weight:700;margin-top:7px}
+.program{font-size:15px;color:#475467;margin-top:3px}
+.feedback{font-size:29px;font-weight:800;margin-top:12px}
+.reason{font-size:13px;line-height:1.45;margin-top:8px}
+.stats{font-size:12px;color:#667085;margin-top:8px}
+button{border:0;border-radius:8px;padding:11px 16px;margin-top:16px;margin-right:7px;font-weight:700;cursor:pointer;background:#1d2939;color:white}
+button.alt{background:#e4e7ec;color:#344054}
+.rules{font-size:10px;color:#667085;line-height:1.35}
+.rules h3{font-size:11px;color:#475467;margin:12px 0 5px}
+.rules div{border:1px solid #eaecf0;border-radius:6px;padding:6px 8px;margin-bottom:4px}
+.saved{font-size:13px;line-height:1.5}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>Régua de Feedback</h1>
+<div class="subtitle">Avaliação do feedback recebido de professores durante a prospecção para o PhD.</div>
+
+<div id="diagnosis" class="diagnosis">
+  <div class="dtitle">FEEDBACK</div>
+  <div id="dUniv" class="univ"></div>
+  <div id="dProgram" class="program"></div>
+  <div id="dFeedback" class="feedback">Preencha os critérios</div>
+  <div id="dReason" class="reason"></div>
+  <div id="dCounts" class="stats"></div>
+</div>
+
+<div class="card">
+<h2>Dados da aplicação</h2>
+
+<div class="grid">
+  <div>
+    <label>Nome da universidade</label>
+    <input id="university" type="text">
+  </div>
+
+  <div>
+    <label>Nome do programa</label>
+    <input id="program" type="text">
+  </div>
+
+  <div>
+    <label>Professor</label>
+    <input id="professor" type="text">
+  </div>
+
+  <div>
+    <label>Origem do funding do programa</label>
+    <select id="fundingOrigin">
+      <option value="">Selecione...</option>
+      <option value="professor">Professor</option>
+      <option value="department">Departamento</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor leu meu currículo?</label>
+    <select id="readCV">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+      <option value="unknown">Não sei</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor mencionou bom fit com o programa/pesquisa?</label>
+    <select id="fit">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+      <option value="notMentioned">Não mencionou</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor mencionou meu background?</label>
+    <select id="background">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor fez alguma crítica ou disse que eu não tenho algum pré-requisito?</label>
+    <select id="criticism">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor mencionou se aceitará novos alunos?</label>
+    <select id="accepting">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+      <option value="notMentioned">Não mencionou</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor ofereceu uma vaga?</label>
+    <select id="offer">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+      <option value="notMentioned">Não mencionou</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Professor disse que não tem funding?</label>
+    <select id="noFunding">
+      <option value="">Selecione...</option>
+      <option value="yes">Sim</option>
+      <option value="no">Não</option>
+      <option value="notMentioned">Não mencionou</option>
+    </select>
+  </div>
+</div>
+
+<div class="note">
+“Não sei” e “Não mencionou” não são considerados respostas negativas.
+</div>
+
+<button id="save">Salvar avaliação</button>
+<button id="clear" class="alt">Limpar</button>
+</div>
+
+<div class="card">
+<h2>Regras da régua</h2>
+<div class="rules">
+<h3>🔴 FEEDBACK RUIM</h3>
+<div>Professor disse que não tem funding → feedback ruim.</div>
+<div>Professor disse que eu não tenho algum pré-requisito → feedback ruim.</div>
+<div>Mais de 3 respostas negativas explícitas → feedback ruim.</div>
+
+<h3>🟢 FEEDBACK EXCELENTE</h3>
+<div>Professor ofereceu uma vaga → feedback excelente, desde que não exista uma condição automática de feedback ruim.</div>
+<div>Sem oferta de vaga: 5 ou mais sinais positivos, sem condição automática de feedback ruim → excelente.</div>
+
+<h3>🟢 FEEDBACK BOM</h3>
+<div>3 ou 4 sinais positivos, sem condição automática de feedback ruim → bom.</div>
+
+<h3>🟡 FEEDBACK NEUTRO</h3>
+<div>Menos de 3 sinais positivos e até 3 respostas negativas, sem condição automática de feedback ruim → neutro.</div>
+
+<h3>CONTAGEM</h3>
+<div>Respostas negativas explícitas: currículo = Não; fit = Não; background = Não; crítica/pré-requisito = Sim; aceitará novos alunos = Não; vaga = Não; não tem funding = Sim.</div>
+<div>Sinais positivos: currículo = Sim; fit = Sim; background = Sim; crítica/pré-requisito = Não; aceitará novos alunos = Sim; vaga = Sim; não tem funding = Não.</div>
+<div>“Não sei” e “Não mencionou” não contam como negativo nem positivo.</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Última avaliação salva</h2>
+<div id="saved" class="saved">Nenhuma avaliação salva.</div>
+</div>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const fields = [
+  'university','program','professor','fundingOrigin','readCV','fit',
+  'background','criticism','accepting','offer','noFunding'
+];
+
+function evaluate(){
+  $('dUniv').textContent = $('university').value.trim();
+  $('dProgram').textContent = $('program').value.trim();
+
+  $('diagnosis').className = 'diagnosis';
+  $('dFeedback').textContent = 'Preencha os critérios';
+  $('dReason').textContent = '';
+  $('dCounts').textContent = '';
+
+  const values = {};
+  fields.forEach(id => values[id] = $(id).value);
+
+  const required = ['fundingOrigin','readCV','fit','background','criticism','accepting','offer','noFunding'];
+  if(required.some(id => !values[id])) return null;
+
+  /*
+   * RESPOSTAS NEGATIVAS
+   */
+  let negative = 0;
+
+  if(values.readCV === 'no') negative++;
+  if(values.fit === 'no') negative++;
+  if(values.background === 'no') negative++;
+  if(values.criticism === 'yes') negative++;
+  if(values.accepting === 'no') negative++;
+  if(values.offer === 'no') negative++;
+  if(values.noFunding === 'yes') negative++;
+
+  /*
+   * SINAIS POSITIVOS
+   */
+  let positive = 0;
+
+  if(values.readCV === 'yes') positive++;
+  if(values.fit === 'yes') positive++;
+  if(values.background === 'yes') positive++;
+  if(values.criticism === 'no') positive++;
+  if(values.accepting === 'yes') positive++;
+  if(values.offer === 'yes') positive++;
+  if(values.noFunding === 'no') positive++;
+
+  let level = '';
+  let reason = '';
+
+  // REGRAS AUTOMÁTICAS DE FEEDBACK RUIM
+  if(values.noFunding === 'yes'){
+    level = 'bad';
+    reason = 'O professor informou que não tem funding. Pela régua, o feedback é ruim.';
+  } else if(values.criticism === 'yes'){
+    level = 'bad';
+    reason = 'O professor apontou uma crítica ou ausência de pré-requisito. Pela régua, o feedback é ruim.';
+  } else if(negative > 3){
+    level = 'bad';
+    reason = 'Foram identificadas mais de 3 respostas negativas.';
+  }
+
+  // FEEDBACK EXCELENTE
+  if(!level && values.offer === 'yes'){
+    level = 'excellent';
+    reason = 'O professor ofereceu uma vaga.';
+  } else if(!level && positive >= 5){
+    level = 'excellent';
+    reason = 'Foram identificados 5 ou mais sinais positivos, sem condição automática de feedback ruim.';
+  }
+
+  // FEEDBACK BOM
+  if(!level && positive >= 3){
+    level = 'good';
+    reason = 'Foram identificados 3 ou 4 sinais positivos, sem condição automática de feedback ruim.';
+  }
+
+  // FEEDBACK NEUTRO
+  if(!level){
+    level = 'neutral';
+    reason = 'Há poucos sinais positivos e não foi identificada uma condição para feedback ruim.';
+  }
+
+  const labels = {
+    excellent:'🟢 FEEDBACK EXCELENTE',
+    good:'🟢 FEEDBACK BOM',
+    neutral:'🟡 FEEDBACK NEUTRO',
+    bad:'🔴 FEEDBACK RUIM'
+  };
+
+  $('diagnosis').className = 'diagnosis ' + level;
+  $('dFeedback').textContent = labels[level];
+  $('dReason').textContent = reason;
+  $('dCounts').textContent = 'Respostas negativas: ' + negative + ' | Sinais positivos: ' + positive;
+
+  return {level, reason, negative, positive};
+}
+
+fields.forEach(id => {
+  $(id).addEventListener('input', evaluate);
+  $(id).addEventListener('change', evaluate);
+});
+
+$('save').addEventListener('click', () => {
+  const result = evaluate();
+
+  if(!result){
+    $('saved').textContent = 'Preencha os critérios antes de salvar.';
+    return;
+  }
+
+  const data = {
+    university:$('university').value.trim(),
+    program:$('program').value.trim(),
+    professor:$('professor').value.trim(),
+    fundingOrigin:$('fundingOrigin').selectedOptions[0].text,
+    readCV:$('readCV').selectedOptions[0].text,
+    fit:$('fit').selectedOptions[0].text,
+    background:$('background').selectedOptions[0].text,
+    criticism:$('criticism').selectedOptions[0].text,
+    accepting:$('accepting').selectedOptions[0].text,
+    offer:$('offer').selectedOptions[0].text,
+    noFunding:$('noFunding').selectedOptions[0].text,
+    feedback:$('dFeedback').textContent,
+    reason:result.reason,
+    negative:result.negative,
+    positive:result.positive
+  };
+
+  localStorage.setItem('feedbackScale', JSON.stringify(data));
+  showSaved(data);
+});
+
+function showSaved(d){
+  $('saved').innerHTML =
+    '<strong>' + d.feedback + '</strong><br>' +
+    '<b>Universidade:</b> ' + (d.university || 'Não informado') + '<br>' +
+    '<b>Programa:</b> ' + (d.program || 'Não informado') + '<br>' +
+    '<b>Professor:</b> ' + (d.professor || 'Não informado') + '<br>' +
+    'Negativas: ' + d.negative + ' | Positivas: ' + d.positive +
+    '<br>' + d.reason;
+}
+
+$('clear').addEventListener('click', () => {
+  fields.forEach(id => $(id).value = '');
+  $('diagnosis').className = 'diagnosis';
+  $('dUniv').textContent = '';
+  $('dProgram').textContent = '';
+  $('dFeedback').textContent = 'Preencha os critérios';
+  $('dReason').textContent = '';
+  $('dCounts').textContent = '';
+});
+
+try{
+  const saved = JSON.parse(localStorage.getItem('feedbackScale'));
+  if(saved) showSaved(saved);
+}catch(e){}
+</script>
+</body>
+</html>
